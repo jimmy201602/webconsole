@@ -25,3 +25,6 @@ _testmain.go
 
 log/
 *.swp
+bin/apibox
+bin/ssh
+.idea
