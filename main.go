@@ -1,6 +1,7 @@
 package main
 
 import (
+	"webconsole/utils"
 	"bytes"
 	"flag"
 	"fmt"
@@ -10,8 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"apibox.club/utils"
-	"apibox.club/website"
+	"webconsole/website"
 )
 
 const (
@@ -25,12 +25,12 @@ type Apibox struct {
 }
 
 func (a *Apibox) GetPID() (*Apibox, error) {
-	b, err := ioutil.ReadFile(apibox.PidPath)
+	b, err := ioutil.ReadFile(utils.PidPath)
 	if nil != err {
 		return nil, err
 	}
 	b = bytes.TrimSpace(b)
-	pid, err := apibox.StringUtils(string(b)).Int()
+	pid, err := utils.StringUtils(string(b)).Int()
 	if nil != err {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (a *Apibox) Start() error {
 
 func (a *Apibox) Stop() error {
 	time.Sleep(time.Duration(1 * time.Second))
-	if apibox.Exists(apibox.PidPath) {
+	if utils.Exists(utils.PidPath) {
 		_, err := a.GetPID()
 		if nil != err {
 			return err
@@ -65,7 +65,7 @@ func (a *Apibox) Stop() error {
 }
 
 func (a *Apibox) Status() (bool, error) {
-	if apibox.Exists(apibox.PidPath) {
+	if utils.Exists(utils.PidPath) {
 		_, err := a.GetPID()
 		if nil != err {
 			return false, err

@@ -10,9 +10,9 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"apibox.club/utils"
 	"github.com/gorilla/websocket"
 	gossh "golang.org/x/crypto/ssh"
+	"webconsole/utils"
 )
 
 var (
@@ -55,7 +55,7 @@ func (s *ssh) Exec(cmd string) (string, error) {
 	}
 	defer session.Close()
 	stdout := buf.String()
-	apibox.Log_Debug("Stdout:", stdout)
+	utils.Log_Debug("Stdout:", stdout)
 	return stdout, nil
 }
 
@@ -85,7 +85,7 @@ func chkSSHSrvAddr(ssh_addr, key string) (string, string, error) {
 	if nil != err {
 		return "", "", err
 	}
-	en_addr, err := apibox.AESEncode(addr.String(), key)
+	en_addr, err := utils.AESEncode(addr.String(), key)
 	if nil != err {
 		return "", "", err
 	}
@@ -98,8 +98,8 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		// 跨域处理，这里需要做一下安全防护。比如：请求白名单(这里只是简单的做了请求HOST白名单)
 		cwl := Conf.Web.CorsWhiteList
-		apibox.Log_Debug("Cors white list:", cwl)
-		apibox.Log_Debug("Request Host:", r.Host)
+		utils.Log_Debug("Cors white list:", cwl)
+		utils.Log_Debug("Request Host:", r.Host)
 		for _, v := range strings.Split(cwl, ",") {
 			if strings.EqualFold(strings.TrimSpace(v), r.Host) {
 				return true
@@ -131,7 +131,7 @@ func SSHWebSocketHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := NewContext(w, r)
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if nil != err {
-		apibox.Log_Err("Upgrade WebScoket Error:", err)
+		utils.Log_Err("Upgrade WebScoket Error:", err)
 		return
 	}
 	defer ws.Close()
@@ -140,11 +140,11 @@ func SSHWebSocketHandler(w http.ResponseWriter, r *http.Request) {
 	cols := ctx.GetFormValue("cols")
 	rows := ctx.GetFormValue("rows")
 
-	apibox.Log_Debug("VM Info:", vm_info, "Cols:", cols, "Rows:", rows)
+	utils.Log_Debug("VM Info:", vm_info, "Cols:", cols, "Rows:", rows)
 
-	de_vm_info, err := apibox.AESDecode(vm_info, aesKey)
+	de_vm_info, err := utils.AESDecode(vm_info, aesKey)
 	if nil != err {
-		apibox.Log_Err("AESDecode:", err)
+		utils.Log_Err("AESDecode:", err)
 		return
 	} else {
 		de_vm_info_arr := strings.Split(de_vm_info, "\n")
@@ -154,7 +154,7 @@ func SSHWebSocketHandler(w http.ResponseWriter, r *http.Request) {
 			vm_addr := strings.TrimSpace(de_vm_info_arr[2])
                         vm_cid := strings.TrimSpace(de_vm_info_arr[4])
 
-			apibox.Log_Debug("VM Addr:", vm_addr)
+			utils.Log_Debug("VM Addr:", vm_addr)
 
 			sh := &ssh{
 				user: user_name,
@@ -163,24 +163,24 @@ func SSHWebSocketHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			sh, err = sh.Connect()
 			if nil != err {
-				apibox.Log_Err(err)
+				utils.Log_Err(err)
 				return
 			}
 
-			ptyCols, err := apibox.StringUtils(cols).Uint32()
+			ptyCols, err := utils.StringUtils(cols).Uint32()
 			if nil != err {
-				apibox.Log_Err(err)
+				utils.Log_Err(err)
 				return
 			}
-			ptyRows, err := apibox.StringUtils(rows).Uint32()
+			ptyRows, err := utils.StringUtils(rows).Uint32()
 			if nil != err {
-				apibox.Log_Err(err)
+				utils.Log_Err(err)
 				return
 			}
 
 			channel, incomingRequests, err := sh.client.Conn.OpenChannel("session", nil)
 			if err != nil {
-				apibox.Log_Err(err)
+				utils.Log_Err(err)
 				return
 			}
 			go func() {
@@ -214,7 +214,7 @@ func SSHWebSocketHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			ok, err := channel.SendRequest("pty-req", true, gossh.Marshal(&req))
 			if !ok || err != nil {
-				apibox.Log_Err(err)
+				utils.Log_Err(err)
 				return
 			}
                         
@@ -224,13 +224,13 @@ func SSHWebSocketHandler(w http.ResponseWriter, r *http.Request) {
                         if vm_cid == "none" {
 				ok, err = channel.SendRequest("shell", true, nil)
 				if !ok || err != nil {
-					apibox.Log_Err(err)
+					utils.Log_Err(err)
 					return
 				}
                         } else {
 				ok, err = channel.SendRequest("exec", true, gossh.Marshal(&execmd))
 				if !ok || err != nil {
-					apibox.Log_Err(err)
+					utils.Log_Err(err)
 					return
 				}
 
@@ -245,7 +245,7 @@ func SSHWebSocketHandler(w http.ResponseWriter, r *http.Request) {
 				for {
 					m, p, err := ws.ReadMessage()
 					if err != nil {
-						apibox.Log_Warn(err.Error())
+						utils.Log_Warn(err.Error())
 						return
 					}
 
@@ -271,7 +271,7 @@ func SSHWebSocketHandler(w http.ResponseWriter, r *http.Request) {
 					for {
 						x, size, err := br.ReadRune()
 						if err != nil {
-							apibox.Log_Err(err.Error())
+							utils.Log_Err(err.Error())
 							return
 						}
 						if size > 0 {
@@ -287,7 +287,7 @@ func SSHWebSocketHandler(w http.ResponseWriter, r *http.Request) {
 							err = ws.WriteMessage(websocket.TextMessage, buf)
 							buf = []byte{}
 							if err != nil {
-								apibox.Log_Err(err.Error())
+								utils.Log_Err(err.Error())
 								return
 							}
 						}
@@ -306,7 +306,7 @@ func SSHWebSocketHandler(w http.ResponseWriter, r *http.Request) {
 			}()
 			<-done
 		} else {
-			apibox.Log_Err("Unable to parse the data.")
+			utils.Log_Err("Unable to parse the data.")
 			return
 		}
 	}
@@ -327,14 +327,14 @@ func (c *Console) ConsoleLoginPage(w http.ResponseWriter, r *http.Request) {
 	ctx := NewContext(w, r)
 	vm_addr := ctx.GetFormValue("vm_addr")
 
-	de_vm_addr, vm_addr_err := apibox.AESDecode(vm_addr, aesKey)
+	de_vm_addr, vm_addr_err := utils.AESDecode(vm_addr, aesKey)
 	if vm_addr == "" || nil != vm_addr_err {
 		ctx.OutHtml("login", nil)
 	} else {
 		lpd := LoginPageData{
 			VM_Addr:    de_vm_addr,
 			EN_VM_Addr: vm_addr,
-			Token:      apibox.StringUtils("sss").Base64Encode(),
+			Token:      utils.StringUtils("sss").Base64Encode(),
 		}
 		ctx.OutHtml("console/console_login", lpd)
 	}
@@ -354,11 +354,11 @@ func (c *Console) ConsoleMainPage(w http.ResponseWriter, r *http.Request) {
 
 	vm_info := ctx.GetFormValue("vm_info")
 
-	apibox.Log_Debug("VM Info:", vm_info)
+	utils.Log_Debug("VM Info:", vm_info)
 
-	de_vm_info, err := apibox.AESDecode(vm_info, aesKey)
+	de_vm_info, err := utils.AESDecode(vm_info, aesKey)
 	if nil != err {
-		apibox.Log_Err("AESDecode:", err)
+		utils.Log_Err("AESDecode:", err)
 		ctx.OutHtml("login", nil)
 	} else {
 		de_vm_info_arr := strings.Split(de_vm_info, "\n")
@@ -387,7 +387,7 @@ func (c *Console) ConsoleMainPage(w http.ResponseWriter, r *http.Request) {
 				VM_Addr:  vm_addr,
 			}
 			wsAddr := r.Host + "/console/sshws/" + vm_info
-			apibox.Log_Debug("WS Addr:", wsAddr)
+			utils.Log_Debug("WS Addr:", wsAddr)
 			cmpd.WS_Addr = wsAddr
 			ctx.OutHtml("console/console_main", cmpd)
 		} else {
@@ -405,7 +405,7 @@ func (c *Console) ConsoleLogin(w http.ResponseWriter, r *http.Request) {
   vm_cid := ctx.GetFormValue("vm_cid")
 	vm_time := time.Now().Format(time.RFC3339)
 
-  apibox.Log_Debug(user_name,user_pwd,vm_addr,vm_cid,vm_time)
+  utils.Log_Debug(user_name,user_pwd,vm_addr,vm_cid,vm_time)
 
 	if vm_cid == "" {
 		vm_cid = "none"
@@ -428,7 +428,7 @@ func (c *Console) ConsoleLogin(w http.ResponseWriter, r *http.Request) {
 			addr: vm_addr,
 		}
 		sh, err = sh.Connect()
-                apibox.Log_Debug(err)
+                utils.Log_Debug(err)
 		if nil != err {
 			result.Ok = false
 			result.Msg = "无法连接到远端主机，请确认远端主机已开机且保证口令的正确性。"
@@ -444,11 +444,11 @@ func (c *Console) ConsoleLogin(w http.ResponseWriter, r *http.Request) {
 				ssh_info = append(ssh_info, vm_addr)
         ssh_info = append(ssh_info, vm_time)
 				ssh_info = append(ssh_info, vm_cid)
-				b64_ssh_info, err := apibox.AESEncode(strings.Join(ssh_info, "\n"), aesKey)
+				b64_ssh_info, err := utils.AESEncode(strings.Join(ssh_info, "\n"), aesKey)
 				if nil != err {
-					apibox.Log_Err("AESEncode:", err)
+					utils.Log_Err("AESEncode:", err)
 					result.Ok = false
-					result.Msg = "内部错误，请联系管理员（postmaster@apibox.club）。"
+					result.Msg = "内部错误，请联系管理员（postmaster@utils.club）。"
 				} else {
 					result.Ok = true
 					result.Data = "/console/main/" + b64_ssh_info
@@ -457,7 +457,7 @@ func (c *Console) ConsoleLogin(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		result.Ok = false
-		result.Msg = "内部错误，请联系管理员（postmaster@apibox.club）。"
+		result.Msg = "内部错误，请联系管理员（postmaster@utils.club）。"
 	}
 	ctx.OutJson(result)
 }
@@ -492,7 +492,7 @@ func (c *Console) ChkSSHSrvAddr(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	aesKey, _ = apibox.StringUtils("").UUID16()
+	aesKey, _ = utils.StringUtils("").UUID16()
 	console := &Console{}
 	Add_HandleFunc("get,post", "/", console.ConsoleLoginPage)
 	Add_HandleFunc("get,post", "/console/chksshdaddr", console.ChkSSHSrvAddr)
@@ -504,17 +504,17 @@ func init() {
 
         switch Conf.Web.LogLevel {
 	case "Debug":
-		apibox.Set_log_level(apibox.LevelDebug)
+		utils.Set_log_level(utils.LevelDebug)
 	case "Error":
-		apibox.Set_log_level(apibox.LevelError)
+		utils.Set_log_level(utils.LevelError)
 	case "Fatal":
-		apibox.Set_log_level(apibox.LevelFatal)
+		utils.Set_log_level(utils.LevelFatal)
 	case "Warn":
-		apibox.Set_log_level(apibox.LevelWarn)
+		utils.Set_log_level(utils.LevelWarn)
 	case "Info":
-		apibox.Set_log_level(apibox.LevelInfo)
+		utils.Set_log_level(utils.LevelInfo)
 	default:
-		apibox.Set_log_level(apibox.LevelInfo)
+		utils.Set_log_level(utils.LevelInfo)
 
 	}
 }

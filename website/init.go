@@ -1,6 +1,7 @@
 package website
 
 import (
+	"webconsole/utils"
 	"bytes"
 	"encoding/json"
 	"encoding/xml"
@@ -11,12 +12,11 @@ import (
 	"strings"
 	"text/template"
 
-	"apibox.club/server"
-	"apibox.club/utils"
+	"webconsole/server"
 )
 
 var (
-	Conf, err = apibox.Get_Conf()
+	Conf, err = utils.Get_Conf()
 )
 
 func Add_HandleFunc(method, pattern string, handler func(http.ResponseWriter, *http.Request)) {
@@ -139,7 +139,7 @@ func (c *Context) OutHtml(tpl string, obj interface{}) {
 		http.Error(c.w, err.Error(), http.StatusInternalServerError)
 		return
 	} else {
-		apibox.Gzip_Html(rb, c.w, c.r)
+		utils.Gzip_Html(rb, c.w, c.r)
 		return
 	}
 }
@@ -153,9 +153,9 @@ func (c *Context) OutJson(obj interface{}) {
 		if Conf.Web.EnableJSONP {
 			jsonpParam := c.GetFormValue(Conf.Web.JSONPParam)
 			ret := jsonpParam + "(" + string(b) + ")"
-			apibox.Gzip_Binary([]byte(ret), c.w, c.r)
+			utils.Gzip_Binary([]byte(ret), c.w, c.r)
 		} else {
-			apibox.Gzip_Binary(b, c.w, c.r)
+			utils.Gzip_Binary(b, c.w, c.r)
 		}
 	}
 	return
@@ -167,7 +167,7 @@ func (c *Context) OutXML(obj interface{}) {
 	if nil != err {
 		http.Error(c.w, err.Error(), http.StatusInternalServerError)
 	} else {
-		apibox.Gzip_Binary(b, c.w, c.r)
+		utils.Gzip_Binary(b, c.w, c.r)
 	}
 	return
 }
@@ -175,7 +175,7 @@ func (c *Context) OutXML(obj interface{}) {
 func (c *Context) GetFormValue(key string) string {
 	fv := c.v[key]
 	if nil != fv {
-		return strings.TrimSpace(apibox.ToStr(fv.([]string)[0]))
+		return strings.TrimSpace(utils.ToStr(fv.([]string)[0]))
 	} else {
 		return ""
 	}
@@ -224,7 +224,7 @@ func (c *Context) BasicAuth(s string) {
 
 func (c *Context) GetJsonByte() []byte {
 	ct := c.r.Header.Get("Content-Type")
-	if apibox.StringUtils(ct).ContainsBool("application/json") {
+	if utils.StringUtils(ct).ContainsBool("application/json") {
 		b, err := ioutil.ReadAll(c.r.Body)
 		if nil != err {
 			http.Error(c.w, err.Error(), http.StatusInternalServerError)
@@ -264,11 +264,11 @@ func Run() {
 
 func init() {
 	if nil != err {
-		apibox.Log_Fatal(err.Error())
+		utils.Log_Fatal(err.Error())
 	}
-	apibox.Load_Mime(apibox.MimePath)
-	if err := Init_Templates(apibox.Get_Project_Dir()+apibox.PathSeparator+strings.TrimLeft(Conf.Web.TemplateDir, "/"), Conf.Web.TemplateSuffix); nil != err {
-		apibox.Log_Fatal(err)
+	utils.Load_Mime(utils.MimePath)
+	if err := Init_Templates(utils.Get_Project_Dir()+utils.PathSeparator+strings.TrimLeft(Conf.Web.TemplateDir, "/"), Conf.Web.TemplateSuffix); nil != err {
+		utils.Log_Fatal(err)
 	}
 	server.DefaultServeMux.AddStaticDir(Conf.Web.StaticDir)
 }

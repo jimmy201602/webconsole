@@ -1,4 +1,4 @@
-package apibox
+package utils
 
 import (
 	"os"
@@ -37,7 +37,7 @@ const (
 var (
 	LogDir   = Get_Project_Dir() + PathSeparator + "log"
 	ConfDir  = Get_Project_Dir() + PathSeparator + "conf"
-	PidPath  = LogDir + PathSeparator + "apibox.pid"
+	PidPath  = LogDir + PathSeparator + "utils.pid"
 	MimePath = ConfDir + PathSeparator + "mime.types"
 	ConfPath = ConfDir + PathSeparator + "conf.json"
 )

@@ -1,4 +1,4 @@
-package apibox
+package utils
 
 import (
 	"bufio"

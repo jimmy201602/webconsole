@@ -1,7 +1,7 @@
 package server
 
 import (
-	"apibox.club/utils"
+	"webconsole/utils"
 	"net/http"
 	"net/url"
 	"path"
@@ -91,7 +91,7 @@ func (mux *ServeMux) match(r *http.Request, path string) (h http.Handler, patter
 }
 
 func (mux *ServeMux) AddStaticDir(dir string) *ServeMux {
-	mux.staticDir = append(mux.staticDir, apibox.PathSeparator+strings.Trim(dir, "/"))
+	mux.staticDir = append(mux.staticDir, utils.PathSeparator+strings.Trim(dir, "/"))
 	return mux
 }
 
@@ -168,8 +168,8 @@ func (mux *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(rPath, s) {
 			file_path := s + rPath[len(s):]
 			file_path = strings.Trim(file_path, "/")
-			file_path = apibox.Get_Project_Dir() + apibox.PathSeparator + file_path
-			apibox.Gzip_File(file_path, w, r)
+			file_path = utils.Get_Project_Dir() + utils.PathSeparator + file_path
+			utils.Gzip_File(file_path, w, r)
 			return
 		}
 	}
@@ -217,7 +217,7 @@ func PathRegex(pattern string) (params map[int]string, regex *regexp.Regexp, err
 	parts := strings.Split(pattern, "/")
 	params = make(map[int]string, 0)
 	for i, part := range parts {
-		apibox.Log_Debug("Func path[n]:", part)
+		utils.Log_Debug("Func path[n]:", part)
 		if strings.HasPrefix(part, ":") {
 			expr := "([^/]+)"
 			if index := strings.Index(part, "("); index != -1 {

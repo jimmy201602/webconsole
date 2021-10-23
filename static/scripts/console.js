@@ -1,7 +1,7 @@
 /**
  *
  * Auth:Eric Shi
- * Mail:postmaster@apibox.club
+ * Mail:postmaster@utils.club
  * QQ:155122504
  *
  */

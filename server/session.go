@@ -1,7 +1,7 @@
 package server
 
 import (
-	"apibox.club/utils"
+	"webconsole/utils"
 	"container/list"
 	"net/http"
 	"net/url"
@@ -120,7 +120,7 @@ func RegSession(w http.ResponseWriter, r *http.Request, timeout int, enableTls b
 	var session *Session
 	cookie, err := r.Cookie(SessionName)
 	if nil != err && err == http.ErrNoCookie {
-		sid, _ := apibox.StringUtils("").UUID()
+		sid, _ := utils.StringUtils("").UUID()
 		session = SessionManager.Init(sid, timeout)
 		cookie = &http.Cookie{
 			Name:     SessionName,
