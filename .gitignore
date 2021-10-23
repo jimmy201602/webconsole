@@ -22,14 +22,7 @@ _testmain.go
 *.bak
 *.[568vq]
 [568vq].out
-bin/apibox
 
-.vscode/tasks.json
-
-/bin/apibox
 log/
-src/github.com/
-src/golang.org/
 *.swp
 bin/webconsole
-conf/conf.json

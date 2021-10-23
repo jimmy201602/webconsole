@@ -68,6 +68,7 @@ func Get_Bin_Dir() string {
 func Get_Project_Dir() string {
 	dirs := strings.Split(Get_Bin_Dir(), PathSeparator)
 	project_path := strings.Join(dirs[:len(dirs)-1], PathSeparator)
+	//project_path := strings.Join(dirs, PathSeparator)
 	return project_path
 }
 
