@@ -1,4 +1,4 @@
-FROM golang:1.8.3-alpine
+FROM golang:1.17.1-alpine
 
 MAINTAINER Eric Shi <shibingli@realclouds.org>
 ADD . /go/

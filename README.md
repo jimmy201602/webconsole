@@ -2,32 +2,29 @@
 
 ## 常规部署
 ```
-1、下载 go1.8.1.linux-amd64.tar.gz
-2、tar zxvf go1.8.1.linux-amd64.tar.gz -C /usr/local
-3、echo 'export PATH="/usr/local/go/bin:$PATH"' >> /etc/profile
-4、source /etc/profile
-5、cd /opt && git clone --recurse-submodules https://github.com/shibingli/webconsole.git && cd webconsole && git submodule update --init --recursive
-6、cd /opt/webconsole/src/apibox.club/apibox
-7、GOPATH=/opt/webconsole go install
-8、设置开机自动启动
+1、下载 go1.17.1.linux-amd64.tar.gz
+2、tar zxvf go1.17.1.linux-amd64.tar.gz -C /usr/local
+3、cd /opt && git clone https://github.com/jimmy201602/webconsole.git && cd webconsole
+4、cd /opt/webconsole
+5、make build
+6、设置开机自动启动
   cp /opt/webconsole/bin/webconsole  /etc/init.d/   && chmod   755 /etc/init.d/webconsole 
   chkconfig   --add  webconsole  &&  chkconfig webconsole   on  && service webconsole   start
-  
+ 
 
 ```
 
-[下载 Golang](https://storage.googleapis.com/golang/go1.8.1.linux-amd64.tar.gz)
+[下载 Golang](https://storage.googleapis.com/golang/go1.17.1.linux-amd64.tar.gz)
 
 
 ## 容器部署
 ```
 1、下载并安装 Docker
-2、cd /opt && git clone --recurse-submodules https://github.com/shibingli/webconsole.git && cd webconsole && git submodule update --init --recursive
-3、cd /opt/webconsole/src/apibox.club/apibox
-4、GOPATH=/opt/webconsole go install
-5、cd /opt/webconsole
-6、docker build -t webconsole:latest .
-7、docker run -d -p 8080:8080 --restart=always --name webconsole webconsole:latest
+2、cd /opt && git clone https://github.com/jimmy201602/webconsole.git && cd webconsole
+3、cd /opt/webconsole
+4、make build
+5、docker build -t webconsole:latest .
+6、docker run -d -p 8080:8080 --restart=always --name webconsole webconsole:latest
 ```
 
 [安装 Docker](https://docs.docker.com/engine/installation/)
