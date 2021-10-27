@@ -4,8 +4,8 @@ GOBUILD = $(GOCMD) build
 GOCLEAN = $(GOCMD) clean
 
 build:
-		$(GOBUILD) -v -o ./bin/apibox ./main.go
-		$(GOBUILD) -v -o ./bin/ssh ./cmd/pty.go
+		GOOS=linux GOARCH=amd64 $(GOBUILD) -v -o ./bin/apibox ./main.go
+		GOOS=linux GOARCH=amd64 $(GOBUILD) -v -o ./bin/ssh ./cmd/pty.go
 
 clean:
 		$(GOCLEAN)

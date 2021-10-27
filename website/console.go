@@ -494,6 +494,7 @@ func init() {
 	aesKey, _ = utils.StringUtils("").UUID16()
 	console := &Console{}
 	Add_HandleFunc("get,post", "/", console.ConsoleLoginPage)
+	Add_HandleFunc("get,post", "/console", console.ConsoleLoginPage)
 	Add_HandleFunc("get,post", "/console/chksshdaddr", console.ChkSSHSrvAddr)
 	Add_HandleFunc("get,post", "/console/login/:vm_addr", console.ConsoleLoginPage)
 	Add_HandleFunc("get,post", "/console/login", console.ConsoleLogin)
