@@ -32,7 +32,7 @@ func (s *ssh) Connect() (*ssh, error) {
 	config.SetDefaults()
 	config.User = s.user
 	config.Auth = []gossh.AuthMethod{gossh.Password(s.pwd)}
-        config.HostKeyCallback = func(hostname string, remote net.Addr, key gossh.PublicKey) error { return nil }
+	config.HostKeyCallback = func(hostname string, remote net.Addr, key gossh.PublicKey) error { return nil }
 	client, err := gossh.Dial("tcp", s.addr, config)
 	if nil != err {
 		return nil, err
@@ -124,7 +124,7 @@ type jsonMsg struct {
 
 // RFC 4254 Section 6.5
 type execMsg struct {
-	Command  string
+	Command string
 }
 
 func SSHWebSocketHandler(w http.ResponseWriter, r *http.Request) {
@@ -152,7 +152,7 @@ func SSHWebSocketHandler(w http.ResponseWriter, r *http.Request) {
 			user_name := strings.TrimSpace(de_vm_info_arr[0])
 			user_pwd := strings.TrimSpace(de_vm_info_arr[1])
 			vm_addr := strings.TrimSpace(de_vm_info_arr[2])
-                        vm_cid := strings.TrimSpace(de_vm_info_arr[4])
+			vm_cid := strings.TrimSpace(de_vm_info_arr[4])
 
 			utils.Log_Debug("VM Addr:", vm_addr)
 
@@ -217,24 +217,24 @@ func SSHWebSocketHandler(w http.ResponseWriter, r *http.Request) {
 				utils.Log_Err(err)
 				return
 			}
-                        
-                        execmd := execMsg{
-                                Command: "docker exec -it " + vm_cid + " /bin/sh -c 'if [ -x /bin/bash ];then /bin/bash;else /bin/sh;fi'",
-                        }
-                        if vm_cid == "none" {
+
+			execmd := execMsg{
+				Command: "docker exec -it " + vm_cid + " /bin/sh -c 'if [ -x /bin/bash ];then /bin/bash;else /bin/sh;fi'",
+			}
+			if vm_cid == "none" {
 				ok, err = channel.SendRequest("shell", true, nil)
 				if !ok || err != nil {
 					utils.Log_Err(err)
 					return
 				}
-                        } else {
+			} else {
 				ok, err = channel.SendRequest("exec", true, gossh.Marshal(&execmd))
 				if !ok || err != nil {
 					utils.Log_Err(err)
 					return
 				}
 
-                        }
+			}
 
 			done := make(chan bool, 2)
 			go func() {
@@ -366,7 +366,7 @@ func (c *Console) ConsoleMainPage(w http.ResponseWriter, r *http.Request) {
 			user_name := strings.TrimSpace(de_vm_info_arr[0])
 			user_pwd := strings.TrimSpace(de_vm_info_arr[1])
 			vm_addr := strings.TrimSpace(de_vm_info_arr[2])
-      vm_time := strings.TrimSpace(de_vm_info_arr[3])
+			vm_time := strings.TrimSpace(de_vm_info_arr[3])
 
 			now := time.Now()
 			start, _ := time.Parse(time.RFC3339, vm_time)
@@ -379,7 +379,6 @@ func (c *Console) ConsoleMainPage(w http.ResponseWriter, r *http.Request) {
 				ctx.OutHtml("console/console_access", nil)
 				return
 			}
-
 
 			cmpd := ConsoleMainPageData{
 				UserName: user_name,
@@ -402,10 +401,10 @@ func (c *Console) ConsoleLogin(w http.ResponseWriter, r *http.Request) {
 	user_name := ctx.GetFormValue("user_name")
 	user_pwd := ctx.GetFormValue("user_pwd")
 	vm_addr := ctx.GetFormValue("vm_addr")
-  vm_cid := ctx.GetFormValue("vm_cid")
+	vm_cid := ctx.GetFormValue("vm_cid")
 	vm_time := time.Now().Format(time.RFC3339)
 
-  utils.Log_Debug(user_name,user_pwd,vm_addr,vm_cid,vm_time)
+	utils.Log_Debug(user_name, user_pwd, vm_addr, vm_cid, vm_time)
 
 	if vm_cid == "" {
 		vm_cid = "none"
@@ -428,7 +427,7 @@ func (c *Console) ConsoleLogin(w http.ResponseWriter, r *http.Request) {
 			addr: vm_addr,
 		}
 		sh, err = sh.Connect()
-                utils.Log_Debug(err)
+		utils.Log_Debug(err)
 		if nil != err {
 			result.Ok = false
 			result.Msg = "无法连接到远端主机，请确认远端主机已开机且保证口令的正确性。"
@@ -442,7 +441,7 @@ func (c *Console) ConsoleLogin(w http.ResponseWriter, r *http.Request) {
 				ssh_info = append(ssh_info, user_name)
 				ssh_info = append(ssh_info, user_pwd)
 				ssh_info = append(ssh_info, vm_addr)
-        ssh_info = append(ssh_info, vm_time)
+				ssh_info = append(ssh_info, vm_time)
 				ssh_info = append(ssh_info, vm_cid)
 				b64_ssh_info, err := utils.AESEncode(strings.Join(ssh_info, "\n"), aesKey)
 				if nil != err {
@@ -502,7 +501,7 @@ func init() {
 	Add_HandleFunc("get,post", "/console/main/:vm_info", console.ConsoleMainPage)
 	Add_HandleFunc("get,post", "/console/sshws/:vm_info", SSHWebSocketHandler)
 
-        switch Conf.Web.LogLevel {
+	switch Conf.Web.LogLevel {
 	case "Debug":
 		utils.Set_log_level(utils.LevelDebug)
 	case "Error":
