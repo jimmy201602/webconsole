@@ -160,16 +160,6 @@
 ```
     浏览器--》WebSocket--》SSH--》Linux OS
 ```
-
-### 代码地址
-
-[Git@OSC](http://git.oschina.net/shibingli/webconsole)
-
-
-[Github](https://github.com/shibingli/webconsole)
-
-
-[演示地址](http://webconsole.realclouds.org)
     
 
 ## 程序包结构：

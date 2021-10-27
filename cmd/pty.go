@@ -22,6 +22,7 @@ func main() {
 	ssh.Handle(func(s ssh.Session) {
 		cmd := exec.Command("/bin/zsh")
 		cmd.Env = os.Environ()
+		//cmd.Dir = "/tmp"
 		ptyReq, winCh, isPty := s.Pty()
 		if isPty {
 			cmd.Env = append(cmd.Env, fmt.Sprintf("TERM=%s", ptyReq.Term))

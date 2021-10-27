@@ -432,11 +432,11 @@ func (c *Console) ConsoleLogin(w http.ResponseWriter, r *http.Request) {
 			result.Ok = false
 			result.Msg = "无法连接到远端主机，请确认远端主机已开机且保证口令的正确性。"
 		} else {
-			_, err := sh.Exec("true")
-			if nil != err {
-				result.Ok = false
-				result.Msg = "用户无权限访问到远端主机，请联系系统管理员。"
-			} else {
+			//_, err := sh.Exec("true")
+			//if nil != err {
+			//	result.Ok = false
+			//	result.Msg = "用户无权限访问到远端主机，请联系系统管理员。"
+			//} else {
 				ssh_info := make([]string, 0, 0)
 				ssh_info = append(ssh_info, user_name)
 				ssh_info = append(ssh_info, user_pwd)
@@ -452,7 +452,7 @@ func (c *Console) ConsoleLogin(w http.ResponseWriter, r *http.Request) {
 					result.Ok = true
 					result.Data = "/console/main/" + b64_ssh_info
 				}
-			}
+			//}
 		}
 	} else {
 		result.Ok = false
