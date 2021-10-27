@@ -28,3 +28,4 @@ log/
 bin/apibox
 bin/ssh
 .idea
+release/
