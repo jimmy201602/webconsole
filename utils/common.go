@@ -44,23 +44,24 @@ var (
 
 type (
 	WS_Conf struct {
-		Addr           string `json:"addr" xml:"addr"`
-		TlsAddr        string `json:"tls_addr" xml:"tls_addr"`
-		TlsUrl         string `json:"tls_url" xml:"tls_url"`
-		SessionTimeOut int    `json:"session_timeout" xml:"session_timeout"`
-		StaticDir      string `json:"static_dir" xml:"static_dir"`
-		TemplateDir    string `json:"template_dir" xml:"template_dir"`
-		TemplateSuffix string `json:"template_suffix" xml:"template_suffix"`
-		EnableJSONP    bool   `json:"enable_jsonp" xml:"enable_jsonp"`
-		JSONPParam     string `json:"jsonp_param" xml:"jsonp_param"`
-		EnableTLS      bool   `json:"enable_tls" xml:"enable_tls"`
-		CorsWhiteList  string `json:"cors_white_list" xml:"cors_white_list"`
-		EnableFcgi     bool   `json:"enable_fcgi" xml:"enable_fcgi"`
-		TlsCert        string `json:"tls_cert,omitempty" xml:"tls_cert,omitempty"`
-		TlsKey         string `json:"tls_key,omitempty" xml:"tls_key,omitempty"`
-		Daemon         bool   `json:"daemon,omitempty" xml:"daemon,omitempty"`
-                UrlTimeout     string `json:"url_timeout,omitempty" xml:"url_timeout,omitempty"`
-                LogLevel       string `json:"log_level,omitempty" xml:"log_level,omitempty"`
+		Addr                string `json:"addr" xml:"addr"`
+		TlsAddr             string `json:"tls_addr" xml:"tls_addr"`
+		TlsUrl              string `json:"tls_url" xml:"tls_url"`
+		SessionTimeOut      int    `json:"session_timeout" xml:"session_timeout"`
+		StaticDir           string `json:"static_dir" xml:"static_dir"`
+		TemplateDir         string `json:"template_dir" xml:"template_dir"`
+		TemplateSuffix      string `json:"template_suffix" xml:"template_suffix"`
+		EnableJSONP         bool   `json:"enable_jsonp" xml:"enable_jsonp"`
+		JSONPParam          string `json:"jsonp_param" xml:"jsonp_param"`
+		EnableTLS           bool   `json:"enable_tls" xml:"enable_tls"`
+		EnableCorsWhiteList bool   `json:"enable_cors_white_list"`
+		CorsWhiteList       string `json:"cors_white_list" xml:"cors_white_list"`
+		EnableFcgi          bool   `json:"enable_fcgi" xml:"enable_fcgi"`
+		TlsCert             string `json:"tls_cert,omitempty" xml:"tls_cert,omitempty"`
+		TlsKey              string `json:"tls_key,omitempty" xml:"tls_key,omitempty"`
+		Daemon              bool   `json:"daemon,omitempty" xml:"daemon,omitempty"`
+		UrlTimeout          string `json:"url_timeout,omitempty" xml:"url_timeout,omitempty"`
+		LogLevel            string `json:"log_level,omitempty" xml:"log_level,omitempty"`
 	}
 
 	DB_Conf struct {

@@ -96,6 +96,10 @@ var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 	CheckOrigin: func(r *http.Request) bool {
+		// 如果开启忽略跨域请求白名单，那么放行所有的请求
+		if Conf.Web.EnableCorsWhiteList {
+			return true
+		}
 		// 跨域处理，这里需要做一下安全防护。比如：请求白名单(这里只是简单的做了请求HOST白名单)
 		cwl := Conf.Web.CorsWhiteList
 		utils.Log_Debug("Cors white list:", cwl)

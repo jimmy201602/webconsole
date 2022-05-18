@@ -1,6 +1,7 @@
 FROM golang:1.17.1-alpine
 
 MAINTAINER Eric Shi <shibingli@realclouds.org>
+RUN apk add make --no-cache
 ADD . /go/
 RUN make build
 RUN rm -Rf /go/cmd
